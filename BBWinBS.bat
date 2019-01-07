@@ -17,14 +17,17 @@ if not exist "%BUSYBOX%" bitsadmin /transfer mydownloadjob /download /priority n
 if not exist "%BUSYBOX%" (
   echo Attempting to fetch via ipfs daemon. Hit Ctrl-C and answer N to "Terminate batch job ?" if it takes more than a minute.
   ipfs cat %BBMH% > "%BUSYBOX%"
-  if ["%errorlevel%"]==["0"] ipfs pin add %BBMH%
 )
 
 if not exist "%BUSYBOX%" (
-  echo Nothing worked, sorry! You could try to download https://ipfs.io/ipfs/QmRHEpjXxnyDuHy42v5zocngHALvk2jpenXserVnxk3CsY manually and save it in the same directory as this script, naming it busybox.exe...
+  echo Nothing worked, sorry! You could try to download https://ipfs.io/ipfs/%BBMH% manually (naming it busybox.exe), then moving it into the same directory as this script.
   pause
   exit
 )
+
+REM Pin busybox.exe if possibel to help with availability
+ipfs version > NUL
+if ["%errorlevel%"]==["0"] ipfs pin add %BBMH%
 
 "%BUSYBOX%" sed "1,/^#! *\/usr\/bin\/env *bash/d" %0 > "%TEMP%\%~n0.sh"
 
